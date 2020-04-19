@@ -6,6 +6,6 @@ import androidx.lifecycle.ViewModel
 class ScoreViewModel(private val finalScore: Int): ViewModel() {
 
     init {
-        Log.i("My Tag" ,"$finalScore")
+        Log.i("My App" ,"The final score in init: $finalScore")
     }
 }

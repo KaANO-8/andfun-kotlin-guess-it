@@ -49,21 +49,12 @@ class GameFragment : Fragment() {
                 container,
                 false
         )
-
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-
-        with(binding) {
-            correctButton.setOnClickListener { viewModel.onCorrect() }
-            skipButton.setOnClickListener { viewModel.onSkip() }
+        // init data binding var
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            gameViewModel = viewModel
         }
-
-        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
-            binding.scoreText.text = newScore.toString()
-        })
-
-        viewModel.word.observe(viewLifecycleOwner, Observer { word ->
-            binding.wordText.text = word
-        })
 
         viewModel.gameFinishedEvent.observe(viewLifecycleOwner, Observer { hasFinished ->
             if (hasFinished){
