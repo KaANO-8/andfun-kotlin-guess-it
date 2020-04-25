@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.android.guesstheword.base.BuzzType
 
 class GameViewModel : ViewModel() {
 
@@ -56,22 +57,28 @@ class GameViewModel : ViewModel() {
         DateUtils.formatElapsedTime(timeLeft)
     }
 
+    private val _buzzType = MutableLiveData<BuzzType>()
+    val buzzType: LiveData<BuzzType>
+        get() = _buzzType
+
     init {
         _score.value = 0
         _word.value = ""
         _gameFinishedEvent.value = false
-        _currentTime.value = COUNTDOWN_TIME/1000
+        _currentTime.value = COUNTDOWN_TIME / 1000
+        //_buzzType.value = BuzzType.NO_BUZZ
         resetList()
         nextWord()
 
         timer = object : CountDownTimer(COUNTDOWN_TIME, ONE_SECOND) {
             override fun onFinish() {
+                _buzzType.value = BuzzType.GAME_OVER
                 _gameFinishedEvent.value = true
                 _currentTime.value = DONE
             }
 
             override fun onTick(millisUntilFinished: Long) {
-                _currentTime.value = millisUntilFinished/1000
+                _currentTime.value = millisUntilFinished / 1000
             }
         }
         // start the timer
@@ -123,10 +130,12 @@ class GameViewModel : ViewModel() {
 
     fun onSkip() {
         _score.value = score.value?.dec()
+        _buzzType.value = BuzzType.COUNTDOWN_PANIC
         nextWord()
     }
 
     fun onCorrect() {
+        _buzzType.value = BuzzType.CORRECT
         _score.value = score.value?.inc()
         nextWord()
     }
